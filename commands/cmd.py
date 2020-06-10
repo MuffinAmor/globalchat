@@ -28,9 +28,9 @@ else:
     with open('chat.json', 'w') as w:
         json.dump(gc, w, indent=4)
 
-reddit = praw.Reddit(client_id='CFfgp9jESrgbLA',
-                     client_secret='HZhSLIsgRMlgP379vA_7YNHQdaU',
-                     user_agent='windows:com:Neko Public:reddit.3.22.0(by /u/<MuffinAmor88919>)')
+reddit = praw.Reddit(client_id='',
+                     client_secret='',
+                     user_agent='')
 					 
 bot = commands.Bot(command_prefix='ng!')
 
@@ -84,7 +84,7 @@ class cmd(commands.Cog):
                                         pass   
                     self.counter =- 0 
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @is_dev()
     async def news(self, ctx, *new:str):
         if ctx.author.bot==False: 
@@ -123,7 +123,7 @@ class cmd(commands.Cog):
                                     pass 
 
 
-    @bot.command(pass_context=True, aliases=["invite"])
+    @bot.command(, aliases=["invite"])
     async def botinv(self, ctx):
         if ctx.author.bot==False: 
             embed =discord.Embed(color=ctx.author.top_role.color)
@@ -150,7 +150,7 @@ class cmd(commands.Cog):
             await ctx.message.delete()
             await ctx.guild.leave()
 			
-    @bot.command(pass_context=True)
+    @bot.command()
     @commands.cooldown(3, 60, commands.BucketType.user)
     async def globalinfo(self, ctx):				
         if ctx.author.bot==False: 			
@@ -166,7 +166,7 @@ class cmd(commands.Cog):
                 embed1.set_thumbnail(url=ctx.message.author.guild.icon_url)
                 await ctx.channel.send(embed=embed1)
 	
-    @bot.command(pass_context=True)
+    @bot.command()
     async def info(self, ctx):				
         if ctx.author.bot==False:   
             for current_global in gc['global']:
@@ -192,7 +192,7 @@ class cmd(commands.Cog):
             await ctx.channel.send(embed=embed)
 
 				
-    @bot.command(pass_context=True)
+    @bot.command()
     @is_vip()
     @commands.cooldown(5, 600, commands.BucketType.user)
     async def globalanime(self, ctx):

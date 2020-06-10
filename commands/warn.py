@@ -103,7 +103,7 @@ class warn(commands.Cog):
             await ctx.send("{0} has never been reported".format(user.name)) 
 		
 ########################################################################################################################
-    @bot.command(pass_context=True)
+    @bot.command()
     async def finduser(self, ctx, Id:int):
         hi = self.bot.get_user(Id)
         for find in report['users']:

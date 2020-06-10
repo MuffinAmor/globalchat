@@ -24,7 +24,7 @@ class help(commands.Cog):
 
 		
 		
-    @bot.command(pass_context=True)
+    @bot.command()
     async def help(self, ctx):
         if ctx.author.bot==False:
             with open('rank.json', encoding='utf-8') as r:

@@ -233,7 +233,7 @@ class owner(commands.Cog):
             await ctx.channel.send("I leave the server {0}".format(server.name))
             await server.leave()
 		  
-    @bot.command(pass_context=True)
+    @bot.command()
     @is_dev()
     async def findserver(self, ctx, serverID:int):
         if ctx.author.bot==False: 
@@ -289,7 +289,7 @@ class owner(commands.Cog):
                 embed.timestamp = datetime.utcnow()
                 await ctx.channel.send(embed=embed)	   
 			
-    @bot.command(pass_context=True) 
+    @bot.command()
     @is_dev()
     async def getinvite(self, ctx, id:int):
         if ctx.author.bot==False: 
@@ -311,7 +311,7 @@ class owner(commands.Cog):
                     return m.author == ctx.message.author and m.channel == ctx.message.channel
                 msg = await self.bot.wait_for('n', check=pred)
 	 		
-    @bot.command(pass_context=True)
+    @bot.command()
     @is_dev()
     async def globalidcheck(self, ctx, userId:int):
         embed = discord.Embed(title="Mutual Servers:", description="", color=botcolor)

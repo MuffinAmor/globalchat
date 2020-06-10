@@ -30,7 +30,7 @@ class ping(commands.Cog):
         days, hours = divmod(hours, 24)
         return "{0} Tag/e, {1} Stunde/n, {2} Minute/n, {3} Sekunde/n".format(days, hours, minutes, seconds)
 
-    @bot.command(pass_context=True)
+    @bot.command()
     async def ping(self, ctx):
         start = time.time()
         async with aiosession.get("https://discordapp.com"):
