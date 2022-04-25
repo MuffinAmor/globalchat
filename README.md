@@ -1,5 +1,5 @@
 # gc1
-Globalchat Update 1 (Lucy)
+Globalchat Update 1 Classic (Lucy)
 
 
 Current Update:
