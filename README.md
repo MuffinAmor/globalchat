@@ -1,19 +1,19 @@
-# Globalchat Classic
-# Releasename Lucy
+# gc6
+Globalchat Update 6
 
-Singlechannel Globalchat
+Current Update:
+- Bildlogging und löschung
+- Serverban
+- Blacklist
+- Ohne Webhooks
+- Customroles
+- Levelsystem implementiert, aber nicht aktiv
+- Json Datenspeicher
 
-Libery:
-discord.py 1.* / py-cord 1.*
-
-Python Version:
-Python 3.*
 
 
-
-Funktionen:
-
-- Token für Bilder
-- Moderationsmöglichkeiten durch Ban, Slowmode, Serverban etc.
-- Levelsystem implementierung
-- Möglichkeit von DM Nachrichten über den Bot zu moderationszwecken
+Next Update:
+- Chatroomsystem
+- Moderation Role
+- Roomowner
+- Multichannel funktion

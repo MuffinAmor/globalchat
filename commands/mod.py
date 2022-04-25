@@ -1,28 +1,18 @@
 import asyncio
-import json
-import os
 from datetime import datetime
 
 import discord
 from discord.ext import commands
 
-from check import is_lmod
-from check import is_mod
+from lib.general import add_user
+from lib.general import remove_user
+from lib.pics import request_pic_msg, remove_pic
+from lib.serverban import add_server, remove_server, request_server
+from lib.wordblocker import addword
+from lib.wordblocker import blacklist
+from lib.wordblocker import removeword
 
-os.chdir(r'/home/niko/bot/rankdata')
-
-if os.path.isfile("wordblocker.json"):
-    with open('wordblocker.json', encoding='utf-8') as r:
-        blocked = json.load(r)
-else:
-    blocked = {'global': []}
-    blocked['global'].append({
-        'word': ["discord.gg"]
-    })
-    with open('wordblocker.json', 'w') as r:
-        json.dump(mt, r, indent=4)
-
-bot = commands.Bot(command_prefix='ng!')
+bot = commands.Bot(command_prefix='')
 
 botcolor = 0x00ff06
 
@@ -34,7 +24,7 @@ class mod(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @is_mod()
+    @commands.has_permissions(administrator=True)
     async def dm(self, ctx, userid: int, *args: str):
         user = self.bot.get_user(userid)
         msg = ' '.join(args)
@@ -42,125 +32,29 @@ class mod(commands.Cog):
             await ctx.send("Please provide a userid")
         if not args:
             await ctx.send("Please provide a reason")
-        embed = discord.Embed(title="Moderator message from ***{0}***".format(ctx.author.name),
-                              color=ctx.author.color)
-        embed.add_field(name='CSC message', value=msg, inline='False')
-        embed.set_thumbnail(url=user.avatar_url)
+        embed = discord.Embed(title="Moderator message.", color=ctx.author.color)
+        embed.add_field(name='CSC message', value=msg, inline=False)
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
         embed.set_footer(text='Mod message')
         embed.timestamp = datetime.utcnow()
         await user.send(embed=embed)
-        channel = self.bot.get_channel(631250581922775094)
-        await channel.send(embed=embed)
         await ctx.author.send("The message has been send to {}".format(user.name))
         await ctx.send("Sending succesfully")
 
     @commands.command()
-    @is_mod()
+    @commands.has_permissions(administrator=True)
     async def ban(self, ctx, user_id: int):
-        with open('rank.json', encoding='utf-8') as r:
-            rank = json.load(r)
         if not ctx.message.author.bot:
-            for c in rank['banned']:
-                if str(id) in c['id']:
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(
-                        description='The User **{0}** is allready in the Databank as Banned'.format(user),
-                        color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-                if not str(ctx.guild.id) in c['id']:
-                    c['id'].append(str(user_id))
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(description='The User {0} has been added to Banned'.format(user),
-                                          color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-            with open('rank.json', 'w') as r:
-                json.dump(rank, r, indent=4)
-            try:
-                member = self.bot.get_user(user_id)
-            except:
-                member = user_id
-            channel = self.bot.get_channel(631250810336182273)
-            embed = discord.Embed(title="Userban: ***{0}***".format(member), color=0xff0000)
-            embed.set_image(
-                url="https://cdn.discordapp.com/attachments/560579412333166612/573892323923198002/unknown.png")
-            embed.set_footer(text='Banned by {0}'.format(ctx.author.name))
-            embed.timestamp = datetime.utcnow()
-            await channel.send(embed=embed)
-            embed1 = discord.Embed(description='{0} has been banned.'.format(member), color=botcolor)
-            embed1.set_image(
-                url="https://cdn.discordapp.com/attachments/560579412333166612/573892323923198002/unknown.png")
-            embed.set_footer(text='Banned by {0}'.format(ctx.author.name))
-            embed.timestamp = datetime.utcnow()
-            await ctx.channel.send(embed=embed1)
+            await ctx.send(add_user(str(user_id), 'banned'))
 
     @commands.command()
-    @is_lmod()
+    @commands.has_permissions(administrator=True)
     async def unban(self, ctx, user_id: int):
-        with open('rank.json', encoding='utf-8') as r:
-            rank = json.load(r)
         if not ctx.message.author.bot:
-            for c in rank['banned']:
-                if not str(id) in c['id']:
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(description='The User **{0}** is not in the Databank as Banned'.format(user),
-                                          color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-                if str(ctx.guild.id) in c['id']:
-                    c['id'].remove(str(user_id))
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(description='The User {0} has been unbanned'.format(user), color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-            with open('rank.json', 'w') as r:
-                json.dump(rank, r, indent=4)
+            await ctx.send(remove_user(str(user_id), 'banned'))
 
     @commands.command()
-    @is_mod()
-    async def checkban(self, ctx, user_id: int):
-        with open('rank.json', encoding='utf-8') as r:
-            rank = json.load(r)
-        if not ctx.message.author.bot:
-            for c in rank['banned']:
-                if str(id) in c['id']:
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(description='The User **{0}** is banned'.format(user), color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-                if not str(ctx.guild.id) in c['id']:
-                    try:
-                        user = self.bot.get_user(user_id)
-                    except:
-                        user = user_id
-                    embed = discord.Embed(description='The User {0} is not banned'.format(user), color=botcolor)
-                    embed.timestamp = datetime.utcnow()
-                    await ctx.channel.send(embed=embed)
-                    break
-
-    @commands.command()
-    @is_mod()
+    @commands.has_permissions(administrator=True)
     async def abw(self, ctx, *word: str):
         if not ctx.message.author.bot:
             if not word:
@@ -169,28 +63,10 @@ class mod(commands.Cog):
                 await msg.delete()
                 return
             bw = ' '.join(word)
-            liste = ""
-            for i in blocked['global']:
-                liste += ' '.join(i['words'])
-            if bw in liste:
-                await ctx.send("This Word is allready in the Wordblocker")
-            if not bw in liste:
-                for i in blocked['global']:
-                    i['words'].append(bw)
-                await ctx.channel.send("The Word **{0}** has been added to the Wordblacklist".format(bw))
-                channel = self.bot.get_channel(622414142246092841)
-                embed = discord.Embed(title="Wordblacklist Update",
-                                      description='The Word **{0}** has been added to the Wordblacklist by **{1}**'.format(
-                                          bw, ctx.message.author.name), color=botcolor)
-                embed.timestamp = datetime.utcnow()
-                embed.set_footer(text='Wordblacklist Update', icon_url=ctx.author.avatar_url)
-                embed.set_thumbnail(url=self.bot.user.avatar_url)
-                await channel.send(embed=embed)
-            with open('wordblocker.json', 'w+') as m:
-                json.dump(blocked, m, indent=4)
+            await ctx.send(addword(bw))
 
     @commands.command()
-    @is_mod()
+    @commands.has_permissions(administrator=True)
     async def rbw(self, ctx, *word: str):
         if not ctx.message.author.bot:
             if not word:
@@ -199,43 +75,82 @@ class mod(commands.Cog):
                 await msg.delete()
                 return
             bw = ' '.join(word)
-            liste = ""
-            for i in blocked['global']:
-                liste += ' '.join(i['words'])
-            if not bw in liste:
-                await ctx.send("This Word is not in the Wordblocker")
-            if bw in liste:
-                for i in blocked['global']:
-                    i['words'].remove(bw)
-                await ctx.channel.send("The Word **{0}** has been removed from the Wordblacklist".format(bw))
-                channel = self.bot.get_channel(622414142246092841)
-                embed = discord.Embed(title="Wordblacklist Update",
-                                      description='The Word **{0}** has been removed from the Wordblacklist by **{1}**'.format(
-                                          bw, ctx.message.author.name), color=botcolor)
-                embed.timestamp = datetime.utcnow()
-                embed.set_footer(text='Wordblacklist Update', icon_url=ctx.author.avatar_url)
-                embed.set_thumbnail(url=self.bot.user.avatar_url)
-                await channel.send(embed=embed)
-            with open('wordblocker.json', 'w+') as m:
-                json.dump(blocked, m, indent=4)
+            await ctx.send(removeword(bw))
 
     @commands.command()
-    @is_mod()
+    @commands.has_permissions(administrator=True)
+    async def ban_server(self, ctx, guild: int, *args: str):
+        if not ctx.message.author.bot:
+            reason = ' '.join(args)
+            if not guild:
+                await ctx.send("Bitte gebe die ID des Servers an, den du bannen willst.")
+            elif reason == "":
+                await ctx.send("Bitte gebe einen Grund zum bannen des Servers an.")
+            else:
+                await ctx.send(add_server(str(guild), reason))
+                server = self.bot.get_guild(guild)
+                if server:
+                    await server.leave()
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def unban_server(self, ctx, guild: int):
+        if not ctx.message.author.bot:
+            if not guild:
+                await ctx.send("Bitte gebe die ID des Servers an, den du entbannen willst.")
+            else:
+                remove_server(str(guild))
+                await ctx.send("Der Server wurde erfolgreich entfernt.")
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def show_all_banned(self, ctx):
+        if not ctx.author.bot:
+            await ctx.send(request_server("all"))
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
     async def wbl(self, ctx):
         if not ctx.message.author.bot:
-            liste = ""
-            for i in blocked['global']:
-                liste += '\n'.join(i['words'])
-            embed = discord.Embed(title="Wordblacklist", description=liste, color=botcolor)
-            embed.timestamp = datetime.utcnow()
-            embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
-            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            words = '\n'.join(blacklist())
             try:
-                await ctx.author.send(embed=embed)
+                await ctx.author.send(words)
                 await ctx.send("You have recieve a mail")
             except:
                 await ctx.send(
-                    "Ops, it looks like you have close your Direct messages.\nPlease open it, to recieve the List")
+                    "Ops, it looks like you have close your Direct messages.\n"
+                    "Please open it, to recieve the List")
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def del_pic(self, ctx, *args):
+        token = ' '.join(args)
+        msgs = request_pic_msg(token)
+        msg = await ctx.send("Deleting in process...")
+        if token == "":
+            await msg.edit("Please insert the Picture Token, which you can find under the Picture.")
+        elif msgs:
+            for i in msgs:
+                channel = self.bot.get_channel(int(i))
+                if channel:
+                    message = await channel.fetch_message(msgs[i])
+                    if message:
+                        try:
+                            await message.delete()
+                        except:
+                            await ctx.send(
+                                "I can't delete the Picture in {} .".format(channel.name))
+                            pass
+                    else:
+                        await ctx.send(
+                            "I can't delete the Picture in {} .".format(channel.name))
+                else:
+                    await ctx.send(
+                        "I can't delete the Picture in {} .".format(channel.name))
+            remove_pic(token)
+            await msg.edit(content="The Picture with the Token {} has been deleted sucessfully".format(token))
+        else:
+            await msg.edit(content="A Picture with this Token is not found.")
 
 
 def setup(bot):
