@@ -1,0 +1,13 @@
+{
+    "color": 128,
+    "owner": 0,
+    "token": "OTMwODYyMzQ3MDgwMzE0OTcw.Yd8DHg.22uFTRGXxy8YgpeSZeGUT6COzvg",
+    "error": 930529734079688765,
+    "server": 754413699543990375,
+    "sql": {
+        "user": "lucy",
+        "dialekt": "mysql+pymysql",
+        "database": "global101",
+        "password": "Go2Raspberry!"
+    }
+}
