@@ -1,10 +1,19 @@
-# gc1
-Globalchat Update 1 Classic (Lucy)
+# Globalchat Classic
+# Releasename Lucy
+
+Singlechannel Globalchat
+
+Libery:
+discord.py 1.* / py-cord 1.*
+
+Python Version:
+Python 3.*
 
 
-Current Update:
-- Chatsystem
-- Moderation Role
-- Slow System
-- Bot Owner Commands
-- check System added
+
+Funktionen:
+
+- Token für Bilder
+- Moderationsmöglichkeiten durch Ban, Slowmode, Serverban etc.
+- Levelsystem implementierung
+- Möglichkeit von DM Nachrichten über den Bot zu moderationszwecken
