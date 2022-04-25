@@ -5,7 +5,7 @@ from discord.ext import commands
 
 TOKEN = ''
 
-bot = commands.Bot(command_prefix='')
+bot = commands.Bot(command_prefix='ng!')
 
 botcolor = 0xffffff
 
@@ -23,82 +23,98 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('--------------------------------------')
-    await status_task()
+    bot.loop.create_task(status_task())
 
 
 ########################################################################################################################
 async def status_task():
-    await bot.change_presence(
-        activity=discord.Activity(name='neko-dev.de/info/archiv', type=discord.ActivityType.playing))
+    while True:
+        user = sum(len(s.members) for s in bot.guilds)
+        servers = list(bot.guilds)
+        await bot.change_presence(activity=discord.Game('ng!help | Lucy'), status=discord.Status.online)
+        await asyncio.sleep(15)
+        await bot.change_presence(activity=discord.Game('On Tour', type=3), status=discord.Status.do_not_disturb)
+        await asyncio.sleep(15)
+        await bot.change_presence(activity=discord.Game('ng!help | Lucy'), status=discord.Status.online)
+        await asyncio.sleep(15)
+        await bot.change_presence(activity=discord.Game('with {0} server'.format(str(len(servers))), type=3),
+                                  status=discord.Status.do_not_disturb)
+        await asyncio.sleep(15)
 
 
 ########################################################################################################################
 @bot.command()
-@commands.is_owner()
 async def goodnight(ctx):
-    await ctx.channel.send("Sleep well")
-    await bot.logout()
+    if ctx.author.id == 474947907913515019:
+        await ctx.channel.send("Sleep well")
+        await bot.logout()
 
 
 @bot.command()
-@commands.is_owner()
 async def load(ctx, extension):
-    try:
-        bot.load_extension(extension)
-        print('{} wurde geladen.'.format(extension))
-        embed = discord.Embed(
-            title='{} wurde geladen.'.format(extension),
-            color=botcolor
-        )
-        msg = await ctx.channel.send(embed=embed)
-        await asyncio.sleep(5)
-        await msg.delete()
-    except Exception as error:
-        print('{} konnte nicht geladen werden. [{}]'.format(extension, error))
-        embed = discord.Embed(
-            title='{} konnte nicht geladen werden. [{}]'.format(extension, error),
-            color=botcolor
-        )
-        msg = await ctx.channel.send(embed=embed)
-        await asyncio.sleep(5)
-        await msg.delete()
+    if ctx.author.id == 474947907913515019:
+        try:
+            bot.load_extension(extension)
+            print('{} wurde geladen.'.format(extension))
+            embed = discord.Embed(
+                title='{} wurde geladen.'.format(extension),
+                color=botcolor
+            )
+            msg = await ctx.channel.send(embed=embed)
+            await asyncio.sleep(5)
+            await msg.delete()
+        except Exception as error:
+            print('{} konnte nicht geladen werden. [{}]'.format(extension, error))
+            embed = discord.Embed(
+                title='{} konnte nicht geladen werden. [{}]'.format(extension, error),
+                color=botcolor
+            )
+            msg = await ctx.channel.send(embed=embed)
+            await asyncio.sleep(5)
+            await msg.delete()
+    else:
+        await ctx.channel.send('Sorry, but only the Botowner can use this command')
 
 
 ########################################################################################################################
 @bot.command()
-@commands.is_owner()
 async def unload(ctx, extension):
-    try:
-        bot.unload_extension(extension)
-        print('{} wurde deaktiviert.'.format(extension))
-        embed = discord.Embed(
-            title='{} wurde deaktiviert.'.format(extension),
-            color=botcolor
-        )
-        msg = await ctx.channel.send(embed=embed)
-        await asyncio.sleep(5)
-        await msg.delete()
-    except Exception as error:
-        print('{} konnte nich deaktiviert werden. [{}]'.format(extension, error))
-        embed = discord.Embed(
-            title='{} konnte nicht deaktiviert werden. [{}]'.format(extension, error),
-            color=botcolor
-        )
-        msg = await ctx.channel.send(embed=embed)
-        await asyncio.sleep(5)
-        await msg.delete()
+    if ctx.author.id == 474947907913515019:
+        try:
+            bot.unload_extension(extension)
+            print('{} wurde deaktiviert.'.format(extension))
+            embed = discord.Embed(
+                title='{} wurde deaktiviert.'.format(extension),
+                color=botcolor
+            )
+            msg = await ctx.channel.send(embed=embed)
+            await asyncio.sleep(5)
+            await msg.delete()
+        except Exception as error:
+            print('{} konnte nich deaktiviert werden. [{}]'.format(extension, error))
+            embed = discord.Embed(
+                title='{} konnte nicht deaktiviert werden. [{}]'.format(extension, error),
+                color=botcolor
+            )
+            msg = await ctx.channel.send(embed=embed)
+            await asyncio.sleep(5)
+            await msg.delete()
+    else:
+        await ctx.channel.send('Sorry, but only the Botowner can use this command')
 
 
 ########################################################################################################################
 @bot.command()
-@commands.is_owner()
 async def reload(ctx, extension):
-    try:
-        bot.unload_extension(extension)
-        bot.load_extension(extension)
-        await ctx.channel.send('{} wurde neu geladen.'.format(extension))
-    except Exception as error:
-        await ctx.channel.send('{} konnte nicht geladen werden. [{}]'.format(extension, error))
+    if ctx.author.id == 474947907913515019:
+        try:
+            bot.unload_extension(extension)
+            bot.load_extension(extension)
+            await ctx.channel.send('{} wurde neu geladen.'.format(extension))
+        except Exception as error:
+            await ctx.channel.send('{} konnte nicht geladen werden. [{}]'.format(extension, error))
+    else:
+        await ctx.channel.send('Sorry, but only the Botowner can use this command')
 
 
 ########################################################################################################################
