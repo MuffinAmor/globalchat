@@ -1,40 +1,40 @@
 import json
 from functools import lru_cache
 
-from lib.sql import session_scope, GlobalTable, Ranks
+from lib.RankHandler import UserData
+from lib.sql import session_scope, GlobalTable, Ranks, Blacklist
 
 message_cache = {}
 
-'''
-@lru_cache(maxsize=120)
-def blacklist():
-    blacklist = {}
-    with session_scope() as db_session:
-        room_data = db_session.query(RoomTable)
-        room_table = [p.dump() for p in room_data]
-        print("[DATENBANK] >> Blacklist Cache wird geladen")
-        for i in room_table:
-            blacklist[i["name"]] = i["blacklist"]["data"]
-        return blacklist
 
-
-def check_for_word(room, message):
+def check_for_word(message):
     for i in message:
-        if i.lower() in blacklist()[room]:
+        if i.lower() in blacklist():
             return True
 
+
 @lru_cache()
-def public():
-    public_cache = {}
+def blacklist():
+    words = []
     with session_scope() as db_session:
-        room_data = db_session.query(PublicTable)
-        room_table = [p.dump() for p in room_data]
-        print("[DATENBANK] >> Public Cache wird geladen")
-        for i in room_table:
-            public_cache[i["name"]] = {
-                "owner": i["owner"]
-            }
-        return public_cache'''
+        word_data = db_session.query(Blacklist)
+        word_table = [p.dump() for p in word_data]
+        print("[DATENBANK] >> User Cache wird geladen")
+        for i in word_table:
+            words.append(i['word_id'])
+        return words
+
+
+@lru_cache()
+def users():
+    user = []
+    with session_scope() as db_session:
+        user_data = db_session.query(UserData)
+        user_table = [p.dump() for p in user_data]
+        print("[DATENBANK] >> User Cache wird geladen")
+        for i in user_table:
+            user.append(i['user_id'])
+        return user
 
 
 @lru_cache()

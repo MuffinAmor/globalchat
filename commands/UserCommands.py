@@ -1,6 +1,7 @@
 from discord import slash_command
 from discord.ext import commands
 
+from lib.CacheHandler import users
 from lib.RankHandler import UserData
 
 
@@ -15,9 +16,21 @@ class UserCommands(commands.Cog):
             if not respond:
                 await ctx.respond("Wie es aussieht, bist du bereits registriert")
             else:
+                users.cache_clear()
                 await ctx.respond("Glückwunsch, du bist nun registriert.")
 
 
+# TODO("register cooldown")
+
+
+'''    @slash_command(name="unregister", description="Lösche deine Daten.")
+    async def unregister(self, ctx):
+        if not ctx.author.bot:
+            respond = UserData(ctx.author.id).register()
+            if not respond:
+                await ctx.respond("Wie es aussieht, bist du bereits registriert")
+            else:
+                await ctx.respond("Glückwunsch, du bist nun registriert.")'''
 
 
 def setup(bot):

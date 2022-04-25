@@ -8,9 +8,9 @@ from lib.RankHandler import EditRanks
 
 
 class RoleCommands(commands.Cog):
-    role = SlashCommandGroup("role", "Rollen ", guilds=[754413698277441566, 953061114617417728])
-    add = role.create_subgroup("add", description=" hinzufügen", guild_ids=[754413698277441566, 953061114617417728])
-    remove = role.create_subgroup("remove", description=" entfernen", guild_ids=[754413698277441566, 953061114617417728])
+    role = SlashCommandGroup("role", "Rollen ", guilds=[754413698277441566])
+    add = role.create_subgroup("add", description=" hinzufügen", guild_ids=[754413698277441566])
+    remove = role.create_subgroup("remove", description=" entfernen", guild_ids=[754413698277441566])
 
     def __init__(self, bot):
         self.bot = bot

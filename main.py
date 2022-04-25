@@ -43,7 +43,8 @@ botcolor = 0xffffff
 bot.remove_command('help')
 ########################################################################################################################
 
-extensions = ['commands.AdminCommands', 'commands.RoleCommands', 'commands.UserCommands']
+extensions = ['commands.AdminCommands', 'commands.RoleCommands', 'commands.UserCommands',
+              'commands.ModerationCommands']
 
 
 # ['commands.clean']
@@ -65,11 +66,6 @@ async def on_ready():
 async def status_task():
     await bot.change_presence(
         activity=discord.Activity(name='everbody do the flop!', type=discord.ActivityType.watching))
-    # await bot.change_presence(activity=discord.Game('working'),
-    #                          status=discord.Status.idle)
-    # await bot.change_presence(
-    #    activity=discord.Streaming(name='1 follow = 10 Min Stream', url='https://www.twitch.tv/host_katsumi')
-    # )
 
 
 ########################################################################################################################

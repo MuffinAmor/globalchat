@@ -3,7 +3,7 @@ import random
 import string
 from contextlib import contextmanager
 
-from sqlalchemy import INTEGER, String, JSON, Column, create_engine, BigInteger, DateTime, Boolean, Integer
+from sqlalchemy import INTEGER, String, JSON, Column, create_engine, BigInteger, Boolean, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -11,6 +11,18 @@ Base = declarative_base()
 
 with open("config.json") as fp:
     data = json.load(fp)["sql"]
+
+
+class Blacklist(Base):
+    __tablename__ = 'blacklist'
+    word_id = Column(Integer, autoincrement=True, primary_key=True)
+    word = Column(String(255), nullable=False)
+
+    def __init__(self, word):
+        self.word = word
+
+    def dump(self):
+        return dict([(k, v) for k, v in vars(self).items() if not k.startswith('_')])
 
 
 class ColorShop(Base):
@@ -46,7 +58,6 @@ class Ranks(Base):
     moderator_role = Column(Boolean)
     partner_role = Column(Boolean)
     vip_role = Column(Boolean)
-    special = Column(String(50))
 
     def __init__(self, user_id, banned, owner_role, admin_role, team_role, moderator_role, partner_role, vip_role,
                  special):
@@ -58,7 +69,6 @@ class Ranks(Base):
         self.moderator_role = moderator_role
         self.partner_role = partner_role
         self.vip_role = vip_role
-        self.special = special
 
     def dump(self):
         return dict([(k, v) for k, v in vars(self).items() if not k.startswith('_')])

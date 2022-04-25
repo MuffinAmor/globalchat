@@ -1,42 +1,32 @@
-from lib.RankHandler import RankCheck
-from lib.sql import RoomTable, session_scope
+from lib.CacheHandler import blacklist
+from lib.sql import session_scope, Blacklist as BL
 
 
-class Blacklist(RankCheck):
-    def __init__(self, room_name: str, user_id: int, word: str = None):
-        super().__init__(room_name, user_id)
+class BlacklistHandling:
+    def __init__(self, word: str):
         self.word = word
 
     def check(self) -> bool:
-        with session_scope() as db_session:
-            data = db_session.query(RoomTable).filter_by(name=self.room_name).first()
-            return self.word.lower() in data.blacklist["data"]
+        data = blacklist()
+        return self.word.lower() in data
 
-    def get_list(self) -> list:
+    def add_word(self) -> str:
         with session_scope() as db_session:
-            data = db_session.query(RoomTable).filter_by(name=self.room_name).first()
+            data = db_session.query(BL).filter_by(word=self.word.lower()).first()
+            if not data:
+                new_word = BL(
+                    word=self.word.lower()
+                )
+                db_session.add(new_word)
+                return "a"
+            else:
+                return "b"
+
+    def remove_word(self) -> str:
+        with session_scope() as db_session:
+            data = db_session.query(BL).filter_by(word=self.word.lower()).first()
             if data:
-                return data.blacklist["data"]
-
-    def add_word(self):
-        if self.is_mod():
-            with session_scope() as db_session:
-                data = db_session.query(RoomTable).filter_by(name=self.room_name).first()
-                if self.word.lower() not in data.blacklist["data"]:
-                    blacklist = data.blacklist
-                    blacklist["data"].append(self.word.lower())
-                    db_session.query(RoomTable).filter_by(name=self.room_name).update({RoomTable.blacklist: blacklist})
-                    return "a"
-                else:
-                    return "b"
-
-    def remove_word(self):
-        if self.is_mod():
-            with session_scope() as db_session:
-                data = db_session.query(RoomTable).filter_by(name=self.room_name).first()
-                if self.word in data.blacklist["data"]:
-                    blacklist = data.blacklist
-                    blacklist["data"].remove(self.word.lower())
-                    return "a"
-                else:
-                    return "b"
+                db_session.query(BL).filter_by(word=self.word.lower()).delete()
+                return "a"
+            else:
+                return "b"

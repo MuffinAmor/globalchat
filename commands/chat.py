@@ -7,7 +7,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from lib.CacheHandler import room, user, check_for_word, registered, message_cache
+from lib.CacheHandler import message_cache, full_rank_check, channels, users, check_for_word
 
 '''elif user_id in room_cache["roles"]["user"]:
     role_icon = ""
@@ -40,24 +40,30 @@ class ChatClass(commands.Cog):
     async def embed_builder(self, message, token):
         print(message.content)
         user_id = message.author.id
-        user_cache = user()
-        if user_id in room_cache["banned"]["data"]:
+        user_cache = full_rank_check()[message.author.id]
+        if "banned" in user_cache:
             return
-        if room_cache["owner"] == user_id:
+        if "owner" in user_cache:
             role_icon = "👑"
             color = 0x0000FF
-        elif user_id in room_cache["mods"]:
+        elif "admin" in user_cache:
+            role_icon = "🛡"
+            color = 0x00FF00
+        elif "team" in user_cache:
+            role_icon = "🛡"
+            color = 0x00FF00
+        elif "moderator" in user_cache:
+            role_icon = "🛡"
+            color = 0x00FF00
+        elif "partner" in user_cache:
+            role_icon = "🛡"
+            color = 0x00FF00
+        elif "vip" in user_cache:
             role_icon = "🛡"
             color = 0x00FF00
         else:
             color = 0x808080
             role_icon = "🕯"
-
-        if user_cache:
-            if "used_icon" in user_cache[user_id]:
-                tier_icon = user_cache[user_id]["used_icon"]
-        else:
-            tier_icon = ""
 
         website = ""
         support = "https://discord.gg/ezz6JMxcRz"
@@ -71,7 +77,7 @@ class ChatClass(commands.Cog):
             embed.set_footer(text=message.guild.name + " | " + token)
 
         embed.set_thumbnail(url=message.author.avatar)
-        embed.set_author(name=f"{role_icon} {tier_icon}| {message.author}")
+        embed.set_author(name=f"{role_icon} | {message.author}")
         if len(message.attachments) != 0:
             ends = [".jpg", ".jpeg", ".jfif", ".png", ".gif"]
             for pic in message.attachments:
@@ -85,20 +91,19 @@ class ChatClass(commands.Cog):
     async def on_message(self, message):
         print(message.content)
         if not message.author.bot:
-            room = ChannelChecker(message.channel.id).return_for_system_cache()
+            room = channels()
             if room:
-                if message.author.id not in registered():
+                if message.author.id not in users():
                     await message.channel.send("Bitte registriere dich mit /register.", delete_after=10)
                 else:
                     print(["Sending: " + message.content])
                     await self.sending(message, room)  # system cache ist ne json
 
-    async def sending(self, message, room_name):
-        channel_cache = room()[room_name]
+    async def sending(self, message):
         token = self.random_id()
-        embed = await self.embed_builder(message, token, room_name)
+        embed = await self.embed_builder(message, token)
         if embed:
-            blacklist = check_for_word(room_name, message.content.split(" "))
+            blacklist = check_for_word(message.content.split(" "))
 
             user_time = self.get_time(message.author.id)
             if user_time:
@@ -131,7 +136,7 @@ class ChatClass(commands.Cog):
                                 pass
                 emote = "✅"
                 await message.add_reaction(emote)
-                self.edit_message(room_name, token, message_list, message.author.id, message.author.name,
+                self.edit_message(token, message_list, message.author.id, message.author.name,
                                   datetime.utcnow())
 
 

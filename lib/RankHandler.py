@@ -20,9 +20,7 @@ class UserData:
 
     def register(self) -> bool:
         with session_scope() as db_session:
-            print("ok")
             data = db_session.query(Ranks).filter_by(user_id=self.user_id).first()
-            print("lmao")
             if not data:
                 new_user = Ranks(
                     user_id=self.user_id,
@@ -36,6 +34,13 @@ class UserData:
                     special="False"
                 )
                 db_session.add(new_user)
+                return True
+
+    def unregister(self) -> bool:
+        with session_scope() as db_session:
+            data = db_session.query(Ranks).filter_by(user_id=self.user_id).first()
+            if data:
+                db_session.query(Ranks).filter_by(user_id=self.user_id).delete()
                 return True
 
 
