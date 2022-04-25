@@ -44,7 +44,7 @@ bot.remove_command('help')
 ########################################################################################################################
 
 extensions = ['commands.AdminCommands', 'commands.RoleCommands', 'commands.UserCommands',
-              'commands.ModerationCommands']
+              'commands.ModerationCommands', 'commands.Commands', 'commands.chat']
 
 
 # ['commands.clean']
@@ -52,6 +52,8 @@ extensions = ['commands.AdminCommands', 'commands.RoleCommands', 'commands.UserC
 
 @bot.event
 async def on_ready():
+    if bot.auto_sync_commands:
+        await bot.sync_commands()
     print('--------------------------------------')
     print('Bot is ready.')
     print('Eingeloggt als')

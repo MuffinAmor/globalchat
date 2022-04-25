@@ -21,7 +21,7 @@ def blacklist():
         word_table = [p.dump() for p in word_data]
         print("[DATENBANK] >> User Cache wird geladen")
         for i in word_table:
-            words.append(i['word_id'])
+            words.append(i['word'])
         return words
 
 
@@ -29,7 +29,7 @@ def blacklist():
 def users():
     user = []
     with session_scope() as db_session:
-        user_data = db_session.query(UserData)
+        user_data = db_session.query(Ranks)
         user_table = [p.dump() for p in user_data]
         print("[DATENBANK] >> User Cache wird geladen")
         for i in user_table:

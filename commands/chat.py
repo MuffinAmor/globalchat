@@ -99,7 +99,7 @@ class ChatClass(commands.Cog):
                     print(["Sending: " + message.content])
                     await self.sending(message, room)  # system cache ist ne json
 
-    async def sending(self, message):
+    async def sending(self, message, channel_list):
         token = self.random_id()
         embed = await self.embed_builder(message, token)
         if embed:
@@ -107,25 +107,26 @@ class ChatClass(commands.Cog):
 
             user_time = self.get_time(message.author.id)
             if user_time:
-                try:
-                    t = round(time.time() - float(user_time))
-                except TypeError:
-                    t = channel_cache["spam"]
-
-                if round(t) < channel_cache["spam"]:
-                    try:
-                        await message.delete()
-                    except PermissionError:
-                        pass
-                    await message.channel.send("Du bist zu schnell", delete_after=5)
-                    return
+                ''' try:
+                     t = round(time.time() - float(user_time))
+                 except TypeError:
+                     t = channel_cache["spam"]
+     
+                 if round(t) < channel_cache["spam"]:
+                 
+                 try:
+                     await message.delete()
+                 except PermissionError:
+                     pass
+                 await message.channel.send("Du bist zu schnell", delete_after=5)
+                 return'''
             if blacklist:
                 await message.channel.send("Eins deiner Wörter war wohl auf der Blacklist.", delete_after=5)
                 return
             else:
                 self.edit_time(message.author.id)
                 message_list = {}
-                for i in channel_cache["channel"]["data"]:
+                for i in channel_list:
                     channel = self.bot.get_channel(i)
                     if channel:
                         if not channel == message.channel:

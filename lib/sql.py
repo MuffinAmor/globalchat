@@ -110,11 +110,11 @@ class CalcTable(Base):
 
 class GlobalTable(Base):
     __tablename__ = 'global'
-    guild_id = Column(BigInteger, primary_key=True, autoincrement=False)
+    server_id = Column(BigInteger, primary_key=True, autoincrement=False)
     channel_id = Column(BigInteger)
 
-    def __init__(self, guild_id, channel_id):
-        self.guild_id = guild_id
+    def __init__(self, server_id, channel_id):
+        self.server_id = server_id
         self.channel_id = channel_id
 
     def dump(self):

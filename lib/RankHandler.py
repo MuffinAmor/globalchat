@@ -84,6 +84,12 @@ class RankCheck(UserData):
             if data.vip_role:
                 return True
 
+    def is_banned(self) -> bool:
+        with session_scope() as db_session:
+            data = db_session.query(Ranks).filter_by(user_id=self.user_id).first()
+            if data.banned:
+                return True
+
 
 class EditRanks(RankCheck):
     """
@@ -208,6 +214,25 @@ class EditRanks(RankCheck):
             if self.check_if():
                 if self.is_vip():
                     db_session.query(Ranks).filter_by(user_id=self.user_id).update({Ranks.vip_role: False})
+                else:
+                    return "a"
+            else:
+                return "b"
+
+    def ban_user(self):
+        with session_scope() as db_session:
+            if self.check_if():
+                if not self.is_banned():
+                    db_session.query(Ranks).filter_by(user_id=self.user_id).update({Ranks.banned: True})
+                    return "a"
+            else:
+                return "b"
+
+    def unban_user(self):
+        with session_scope() as db_session:
+            if self.check_if():
+                if self.is_banned():
+                    db_session.query(Ranks).filter_by(user_id=self.user_id).update({Ranks.banned: False})
                 else:
                     return "a"
             else:
